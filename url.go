@@ -1,4 +1,4 @@
-package otus_go
+package url
 
 import (
 	"crypto/md5"
@@ -10,24 +10,23 @@ import (
 	"strings"
 )
 
-// Shortener interface
-type Shortener interface {
+// IShortener interface
+type IShortener interface {
 	Shorten(string) string
 	Resolve(string) string
 }
 
-// URL is representation of short or long url
-type URL string
-
-var data map[string]string
-
-func init() {
-	data = make(map[string]string)
+// URLShortener main data struct
+type URLShortener struct {
+	Data map[string]string
 }
 
-// Shorten url, and stores it in map
-func (*URL) Shorten(s string) string {
-	u, err := parse(s)
+// Shorten url, and stores it in struct
+func (s *URLShortener) Shorten(url string) string {
+	if s.Data == nil {
+		s.Data = make(map[string]string)
+	}
+	u, err := parse(url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,14 +36,17 @@ func (*URL) Shorten(s string) string {
 
 	shortURL := fmt.Sprintf("%s/%s", hostname, path)
 
-	data[shortURL] = s
+	s.Data[shortURL] = url
 
 	return shortURL
 }
 
 // Resolve url from short to normal or empty if not found
-func (*URL) Resolve(s string) string {
-	if res, ok := data[s]; ok {
+func (s *URLShortener) Resolve(url string) string {
+	if s.Data == nil {
+		panic("Storage is not initialized yet")
+	}
+	if res, ok := s.Data[url]; ok {
 		return res
 	}
 	return ""
