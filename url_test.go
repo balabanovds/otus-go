@@ -6,7 +6,7 @@ import (
 
 func TestURLWithoutHttpPrefix(t *testing.T) {
 	url := "otus.ru/link go"
-	u := URLShortener{}
+	u := NewURLShortener()
 
 	short := u.Shorten(url)
 	long := u.Resolve(short)
@@ -18,7 +18,7 @@ func TestURLWithoutHttpPrefix(t *testing.T) {
 
 func TestURLWithHttpPrefix(t *testing.T) {
 	url := "https://otus.ru/link go"
-	u := URLShortener{}
+	u := NewURLShortener()
 
 	short := u.Shorten(url)
 	long := u.Resolve(short)
@@ -30,13 +30,7 @@ func TestURLWithHttpPrefix(t *testing.T) {
 
 // this test should panic as URLShortener.Data did not initialized
 func TestNotFoundURL(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("TestNotFoundURL should panic")
-		}
-	}()
-
-	u := URLShortener{}
+	u := NewURLShortener()
 
 	long := u.Resolve("some.ru/unknown")
 

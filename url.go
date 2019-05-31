@@ -21,11 +21,16 @@ type URLShortener struct {
 	Data map[string]string
 }
 
+func NewURLShortener() URLShortener {
+	return URLShortener{Data: make(map[string]string)}
+}
+
 // Shorten url, and stores it in struct
 func (s *URLShortener) Shorten(url string) string {
 	if s.Data == nil {
-		s.Data = make(map[string]string)
+		panic("Storage is not initialized yet")
 	}
+
 	u, err := parse(url)
 	if err != nil {
 		log.Fatal(err)
