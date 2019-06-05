@@ -6,59 +6,78 @@ import (
 )
 
 type node struct {
-	value rune
-	next  *node
-	prev  *node
-	mult  int32
-	hidden   bool
+	value     rune
+	nextNode  *node
+	mult      int
+	printable bool
 }
 
-func (n *node) eval() string {
-	// check
-	if (n.prev.value != '\\') &&
-		(unicode.IsDigit(n.value)) {
-		n.mult = n.value
-		for (unicode.IsDigit(n.next.value)) ||
-			(n.next != nil) {
-				if !n.next.hidden {
-					n.mult = n.mult * 10 + n.next.value
-				}
-			n.next.hidden = true
+func (n *node) eval() {
+	if (n.printable) || (unicode.IsLetter(n.value)) {
+		/*
+			we want to get all following digits to compute multiplier for current node
+			for example in a12bc0 -> multiplier for 'a' should be 12, for 'b' multiplier should be 1
+			for 'c' miltiplier should be 0, so 'c' should be absent in result
+		*/
+		if (n.nextNode != nil) && (unicode.IsDigit(n.nextNode.value)) {
+			next := n.nextNode
+			n.mult = int(next.value - '0')
+			for (next.nextNode != nil) && (unicode.IsDigit(next.nextNode.value)) {
+				n.mult = n.mult*10 + int(next.nextNode.value-'0')
+				next = next.nextNode
+			}
+		} else {
+			n.mult = 1
 		}
+		return
 	}
-	// if previous value is '\' so return current no matter what it is
-	// or if current value is letter
-	if (n.prev.value == '\\') ||
-		(unicode.IsLetter(n.value)) {
-		return string(n.value)
+
+	if n.value == '\\' {
+		n.nextNode.printable = true
 	}
-	if unicode.IsDigit(n.value) {
-		// n.previous.multiplier =
+
+}
+
+func (n *node) string() string {
+	var b strings.Builder
+	for i := 0; i < n.mult; i++ {
+		b.WriteRune(n.value)
 	}
-	return ""
+	return b.String()
 }
 
 // Reformat string by key chars
 func Reformat(s string) string {
 	var nodes []*node
 
-	for i, r := range s {
+	r := []rune(s)
+
+	// we run through []rune in backward order to get next reference for each node
+	for i, j := len(r)-1, 0; i >= 0; i, j = i-1, j+1 {
 		n := &node{
-			value: r,
+			value: r[i],
 		}
-		if i > 0 {
-			n.prev = nodes[i-1]
+		if i < len(r)-1 {
+			n.nextNode = nodes[j-1]
 		}
 		nodes = append(nodes, n)
 	}
 
+	// as we got []node in backward order so we reverse it just for convinience
+	for left, right := 0, len(nodes)-1; left < right; left, right = left+1, right-1 {
+		nodes[left], nodes[right] = nodes[right], nodes[left]
+	}
+
 	var strb strings.Builder
 
-	// create next branch
-	for i, n := range nodes {
-		if i < len(nodes)-1 {
-			n.next = nodes[i+1]
-		}
+	// we evaluate each node
+	for _, n := range nodes {
+		n.eval()
+	}
+
+	// we write each node to strings buffer
+	for _, n := range nodes {
+		strb.WriteString(n.string())
 	}
 
 	return strb.String()
