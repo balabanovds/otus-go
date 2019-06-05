@@ -5,7 +5,7 @@ import (
 )
 
 func TestOne(t *testing.T) {
-	in := "a4bc2d5e"
+	in := "a12"
 	expected := "aaaabccddddde"
 
 	got := Reformat(in)
