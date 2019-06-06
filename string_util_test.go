@@ -91,3 +91,25 @@ func TestEight(t *testing.T) {
 		t.Errorf("Expected: %s, got: %s", expected, got)
 	}
 }
+
+func TestNine(t *testing.T) {
+	in := `<5`
+	expected := `<<<<<`
+
+	got := Reformat(in)
+
+	if expected != got {
+		t.Errorf("Expected: %s, got: %s", expected, got)
+	}
+}
+
+func TestTen(t *testing.T) {
+	in := `☀5`
+	expected := `☀☀☀☀☀`
+
+	got := Reformat(in)
+
+	if expected != got {
+		t.Errorf("Expected: %s, got: %s", expected, got)
+	}
+}

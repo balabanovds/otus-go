@@ -34,7 +34,13 @@ func (n *node) eval() {
 
 	if n.value == '\\' {
 		n.nextNode.printable = true
+		return
 	}
+	if unicode.IsDigit(n.value) {
+		return
+	}
+	n.printable = true
+	n.eval()
 
 }
 
