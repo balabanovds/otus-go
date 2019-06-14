@@ -11,12 +11,6 @@ func TestFindMax(t *testing.T) {
 	}
 	expected := "three"
 
-	slice := make([]interface{}, len(in))
-
-	for i, v := range in {
-		slice[i] = v
-	}
-
 	got := FindMax(slice, predicate)
 
 	if got != expected {
