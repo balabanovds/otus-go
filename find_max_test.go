@@ -10,10 +10,17 @@ func TestFindMax(t *testing.T) {
 		return len(i) > len(j)
 	}
 	expected := "three"
-	// got := FindMax([]int{}, predicate)
 
-	// if got != expected {
-	// 	t.Errorf("got %v, expected: %v", got, expected)
-	// }
+	slice := make([]interface{}, len(in))
+
+	for i, v := range in {
+		slice[i] = v
+	}
+
+	got := FindMax(slice, predicate)
+
+	if got != expected {
+		t.Errorf("got %v, expected: %v", got, expected)
+	}
 
 }
