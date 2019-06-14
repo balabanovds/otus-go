@@ -35,7 +35,7 @@ func (l List) Last() *Item {
 
 // PushFront item at the beginning of list
 func (l *List) PushFront(v interface{}) *Item {
-	i := Item{value: v}
+	i := Item{value: v, container: l}
 
 	if l.insertFirst(&i) {
 		return &i
@@ -52,7 +52,7 @@ func (l *List) PushFront(v interface{}) *Item {
 
 // PushBack item to the end of list
 func (l *List) PushBack(v interface{}) *Item {
-	i := Item{value: v}
+	i := Item{value: v, container: l}
 
 	if l.insertFirst(&i) {
 		return &i
@@ -112,9 +112,10 @@ func (l *List) insertFirst(i *Item) bool {
 
 // Item is one item in double linked list
 type Item struct {
-	value interface{}
-	next  *Item
-	prev  *Item
+	value     interface{}
+	next      *Item
+	prev      *Item
+	container *List
 }
 
 // Value return value of current item
@@ -134,17 +135,22 @@ func (i Item) Prev() *Item {
 
 // Remove self destruct
 func (i *Item) Remove() {
-	prevItem := i.prev
-	nextItem := i.next
-	if prevItem == nil { // we remove first item
-		nextItem.prev = nil
-	} else if nextItem == nil { // we remove last item
-		prevItem.next = nil
+	prev := i.Prev()
+	next := i.Next()
+	if prev == nil { // we remove first item
+		next.prev = nil
+		i.container.first = next
+	} else if next == nil { // we remove last item
+		prev.next = nil
+		i.container.last = prev
 	} else { // we remove middle item
-		nextItem.prev = nil
-		prevItem.next = nil
+		// we cross reference neighbor Items
+		next.prev = prev
+		prev.next = next
 	}
 	i.value = nil
 	i.next = nil
 	i.prev = nil
+	delete(i.container.data, i)
+	i = nil
 }

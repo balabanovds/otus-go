@@ -101,17 +101,29 @@ func TestRemoveItem(t *testing.T) {
 	toDelItem := l.GetNth(1)
 	toDelItem.Remove()
 
-	if l.First().Next() != l.Last().Prev() {
-		t.Error("After remove middle item, first intem does not point to last item")
+	if l.First().Next().Value() != i3 {
+		t.Error("After remove middle item, first item does not point to last item")
+	}
+	if l.Last().Prev().Value() != i1 {
+		t.Error("After remove middle item, last item does not point to first item")
 	}
 
 	l = createList()
 	l.First().Remove()
 	if l.First().Prev() != nil {
-		t.Error("After remove first item, new first item pointer to previos is not nil")
+		t.Error("After remove first item, new first item prev should be nil")
 	}
 	if l.First().Value() != i2 {
 		t.Errorf("After remove first item, new first item expected %v, got %v", i2, l.First().Value())
+	}
+
+	l = createList()
+	l.Last().Remove()
+	if l.Last().Next() != nil {
+		t.Error("After remove last item, new last item next should be nil")
+	}
+	if l.Last().Value() != i2 {
+		t.Errorf("After remove last item, new last item expected %v, got %v", i2, l.First().Value())
 	}
 
 }
