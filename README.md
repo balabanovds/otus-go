@@ -13,7 +13,7 @@
 1. `func FindMax(slice []interface{}, func less(i, j int) bool) interface{}`
 
     Тут функция принимает слайс интерфейсов
-    `s := []interface{}{"qw", "as", "de"}`
+    `go s := []interface{}{"qw", "as", "de"}`
     или
     `s := []interface{}{1, 2, 3}`
     Тогда функция компаратор (less) должна делать преобразование типа, например
