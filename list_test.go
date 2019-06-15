@@ -125,5 +125,49 @@ func TestRemoveItem(t *testing.T) {
 	if l.Last().Value() != i2 {
 		t.Errorf("After remove last item, new last item expected %v, got %v", i2, l.First().Value())
 	}
+}
 
+func TestInsertAfter(t *testing.T) {
+	l := createList()
+	// ["test", 123, true]
+
+	// we want insert i4="4th" after 123
+	// new list ["test", 123, "4th", true]
+	nth := l.InsertAfterNth(1, i4)
+	if nth.Value() != i4 {
+		t.Errorf("Wrong return: want %v, got %v", i4, nth.Value())
+	}
+	if nth.Prev().Value() != i2 {
+		t.Errorf("Nth prev item: want %v, got %v", i2, nth.Prev().Value())
+	}
+	if nth.Next().Value() != i3 {
+		t.Errorf("Nth next item: want %v, got %v", i3, nth.Next().Value())
+	}
+
+	prev := l.GetNth(1)
+	if prev.Next().Value() != i4 {
+		t.Errorf("Previous next item: want %v, got %v", i4, prev.Next().Value())
+	}
+
+	next := l.GetNth(3)
+	if next.Prev().Value() != i4 {
+		t.Errorf("Next previous item: want %v, got %v", i4, next.Prev().Value())
+	}
+
+	// insert one more at the end and one to the front
+	nth = l.InsertAfterNth(10, i4)
+	nthMinus := l.InsertAfterNth(-2, i4)
+	// now we expect 
+	// ["4th", "test", 123, "4th", true, "4th"]
+	if l.Len() != 6 {
+		t.Errorf("List length after insertion: want %v, got %v", 6, l.Len())
+	}
+
+	if l.Last().Value() != i4 {
+		t.Errorf("New last item: want %v, got %v", i4, l.Last().Value())
+	}
+
+	if nthMinus.Next().Value() != i1 {
+		t.Errorf("New front item next: want %v, got %v", i1, nthMinus.Next().Value())
+	}
 }

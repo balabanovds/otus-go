@@ -93,8 +93,27 @@ func (l List) GetNth(n int) *Item {
 	return i
 }
 
-// TODO try to implement
-// func (l *List) InsertAfter(n *Item, v interface{}) {}
+// InsertAfterNth insert new item after nth element;
+// if n >= length of list, then add back
+// if n is negative add front
+func (l *List) InsertAfterNth(n int, v interface{}) *Item {
+	if n >= l.Len() {
+		return l.PushBack(v)
+	}
+	if n < 0 {
+		return l.PushFront(v)
+	}
+
+	nth := l.GetNth(n)
+	next := nth.Next()
+	i := Item{value: v, container: l, prev: nth, next: next}
+	nth.next = &i
+	next.prev = &i
+
+	l.append(&i)
+
+	return &i
+}
 
 func (l *List) append(i *Item) {
 	l.data[i] = true

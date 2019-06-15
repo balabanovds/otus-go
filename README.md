@@ -1,4 +1,4 @@
-# Реализовать двусвязанный список.
+# Реализовать двусвязанный список
 
 Что такое двусвязный список: https://en.wikipedia.org/wiki/Doubly_linked_list
 
@@ -7,10 +7,14 @@
 ```go
 List      // тип контейнер
   Len()   // длинна списка
-  First() // первый Item
-  Last()  // последний Item
-  PushFront(v interface{}) // добавить значение в начало
-  PushBack(v interface{})  // добавить значение в конец
+  First() *Item // первый Item
+  Last() *Item  // последний Item
+  PushFront(v interface{}) *Item // добавить значение в начало
+  PushBack(v interface{}) *Item  // добавить значение в конец
+  // дополнительно
+  GetNth(n int) *Item // получить n-ный Item списка
+  InsertAfterNth(n int, v interface{}) // вставить в середину списка после n-нного индекса
+
 
 Item   // элемент списка
   Value() interface{}  // возвращает значение
