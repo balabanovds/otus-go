@@ -48,3 +48,28 @@ func TestFindMaxSimpleStruct(t *testing.T) {
 		t.Errorf("Want %v, got %v", "Petya", max.(person).name)
 	}
 }
+func TestFindMaxReflInt(t *testing.T) {
+	s := []int64{1, 333, 33}
+	less := func(i, j int) bool {
+		return s[i] < s[j]
+	}
+
+	max := FindMaxReflection(s, less)
+
+	if max.(int64) != 333 {
+		t.Errorf("Want %v, got %v", 333, max)
+	}
+}
+
+func TestFindMaxReflString(t *testing.T) {
+	s := []string{"1", "4", "3"}
+	less := func(i, j int) bool {
+		return s[i] < s[j]
+	}
+
+	max := FindMaxReflection(s, less)
+
+	if max != "4" {
+		t.Errorf("Want %v, got %v", "4", max)
+	}
+}
