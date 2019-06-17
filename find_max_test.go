@@ -15,6 +15,19 @@ func TestFindMaxSimpleInt(t *testing.T) {
 	}
 }
 
+func TestFindMaxSimpleEmpty(t *testing.T) {
+	s := []interface{}{}
+	less := func(i, j int) bool {
+		return s[i].(int) < s[j].(int)
+	}
+
+	max := FindMax(s, less)
+
+	if max != nil {
+		t.Errorf("Want %v, got %v", 333, max)
+	}
+}
+
 func TestFindMaxSimpleString(t *testing.T) {
 	s := []interface{}{"1", "4", "3"}
 	less := func(i, j int) bool {

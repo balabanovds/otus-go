@@ -1,21 +1,23 @@
 package max
 
 import (
+	"fmt"
 	"reflect"
 )
 
 // FindMax finds max of values incoming in slice structure,
 // based on comparator provided by user
 func FindMax(slice []interface{}, less func(i, j int) bool) interface{} {
-	s := make([]interface{}, len(slice))
-	for i, v := range slice {
-		s[i] = v
+	if len(slice) == 0 {
+		return nil
 	}
 
-	max := s[0]
-	for i := 1; i < len(s); i++ {
+	max := slice[0]
+	l := len(slice)
+
+	for i := 1; i < l; i++ {
 		if less(i-1, i) {
-			max = s[i]
+			max = slice[i]
 		}
 	}
 
@@ -24,10 +26,10 @@ func FindMax(slice []interface{}, less func(i, j int) bool) interface{} {
 
 // FindMaxReflection finds max of values in slice structure,
 // based on comparator provided by user, but slice is provided as interface{}
-func FindMaxReflection(slice interface{}, less func(i, j int) bool) interface{} {
+func FindMaxReflection(slice interface{}, less func(i, j int) bool) (interface{}, error) {
 
 	if reflect.TypeOf(slice).Kind() != reflect.Slice {
-		panic("Income is not a slice")
+		return nil, fmt.Errorf("First argument should be slice")
 	}
 	s := reflect.ValueOf(slice)
 
@@ -38,7 +40,7 @@ func FindMaxReflection(slice interface{}, less func(i, j int) bool) interface{} 
 		}
 	}
 
-	return max
+	return max, nil
 }
 
 func conv(v reflect.Value) interface{} {
