@@ -33,22 +33,29 @@ type parser struct {
 	rating sortByCounter
 }
 
-func newTextParser(str string) *parser {
-	re := regexp.MustCompile(`\.|,`)
+func newParser(str string) *parser {
+	// remove all non word , digit or space
+	re := regexp.MustCompile(`[^a-zA-Z0-9 ]`)
 	str = re.ReplaceAllString(str, "")
+
+	// remove all double spaces
+	space := regexp.MustCompile(`\s+`)
+	str = space.ReplaceAllString(str, " ")
+
 	chunks := strings.Split(str, " ")
+
 	t := &parser{
 		data: make(map[string]int),
 	}
 	for _, c := range chunks {
-		t.data[c]++
+		t.data[strings.ToLower(c)]++
 	}
 
 	return t
 }
 
 func (t *parser) rate() {
-	t.rating = []node{}
+	t.rating = make([]node, 0, len(t.data))
 
 	for word, count := range t.data {
 		t.rating = append(t.rating, node{count, word})
@@ -60,7 +67,7 @@ func (t *parser) rate() {
 // Count words in straing and returns first 10 more frequent
 func Count(str string) []string {
 
-	t := newTextParser(str)
+	t := newParser(str)
 	t.rate()
 
 	end := 10

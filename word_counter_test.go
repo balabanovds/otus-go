@@ -14,7 +14,7 @@ Magna ex consectetur eiusmod ea proident veniam irure labore. Cupidatat occaecat
 Amet nulla consectetur fugiat aute et proident qui ad officia eiusmod nostrud qui id tempor. Et amet ex nostrud aliqua. Dolore amet mollit ipsum in nisi velit ipsum consectetur sit amet laboris cupidatat voluptate commodo.
 Commodo labore consequat quis duis reprehenderit dolore nulla cillum nisi incididunt ex. Dolor cillum elit quis id irure enim anim laboris adipisicing do. Nostrud quis irure et fugiat quis occaecat tempor esse veniam elit ex.
 Eu eiusmod velit quis proident Lorem consectetur consectetur quis commodo aliqua non nulla duis. Est dolor voluptate ad ullamco reprehenderit officia sunt esse exercitation dolore minim Lorem minim laboris. Enim nostrud nulla proident reprehenderit adipisicing sint voluptate irure veniam pariatur aute.`
-	expected := []string{"consectetur", "irure", "voluptate", "ad", "ex", "laborum", "cillum", "laboris", "nulla", "officia"}
+	expected := []string{"consectetur", "ad", "irure", "voluptate", "cillum", "ex", "laborum", "officia", "laboris", "nulla"}
 	got := Count(text)
 	if !reflect.DeepEqual(expected, got) {
 		t.Errorf("\nexpected:\t%+v\nreceived:\t%+v", expected, got)
