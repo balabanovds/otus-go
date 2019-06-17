@@ -67,7 +67,10 @@ func TestFindMaxReflInt(t *testing.T) {
 		return s[i] < s[j]
 	}
 
-	max := FindMaxReflection(s, less)
+	max, err := FindMaxReflection(s, less)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if max.(int64) != 333 {
 		t.Errorf("Want %v, got %v", 333, max)
@@ -80,7 +83,10 @@ func TestFindMaxReflString(t *testing.T) {
 		return s[i] < s[j]
 	}
 
-	max := FindMaxReflection(s, less)
+	max, err := FindMaxReflection(s, less)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if max != "4" {
 		t.Errorf("Want %v, got %v", "4", max)
