@@ -2,19 +2,20 @@ package list
 
 // List is a container of double linked items
 type List struct {
-	data  map[*Item]bool
-	first *Item
-	last  *Item
+	//data  map[*Item]bool
+	length int
+	first  *Item
+	last   *Item
 }
 
 //NewList constructor
 func NewList() *List {
-	return &List{data: make(map[*Item]bool)}
+	return &List{}
 }
 
 // Len list length
 func (l List) Len() int {
-	return len(l.data)
+	return l.length
 }
 
 // First item in list
@@ -34,7 +35,7 @@ func (l *List) PushFront(v interface{}) *Item {
 	if l.first == nil && l.last == nil {
 		l.first = i
 		l.last = i
-		l.append(i)
+		l.length++
 		return i
 	}
 
@@ -42,8 +43,8 @@ func (l *List) PushFront(v interface{}) *Item {
 
 	first.prev = i
 	i.next = first
-	l.append(i)
 	l.first = i
+	l.length++
 	return i
 }
 
@@ -54,7 +55,7 @@ func (l *List) PushBack(v interface{}) *Item {
 	if l.first == nil && l.last == nil {
 		l.first = i
 		l.last = i
-		l.append(i)
+		l.length++
 		return i
 	}
 
@@ -62,8 +63,8 @@ func (l *List) PushBack(v interface{}) *Item {
 
 	last.next = i
 	i.prev = last
-	l.append(i)
 	l.last = i
+	l.length++
 	return i
 }
 
@@ -72,7 +73,7 @@ func (l *List) PushBack(v interface{}) *Item {
 // if n > list length we return nil
 func (l List) GetNth(n int) *Item {
 	if n >= 0 { // we iterate from first onwards
-		if n >= l.Len() {
+		if n >= l.length {
 			return nil
 		}
 		i := l.first
@@ -83,7 +84,7 @@ func (l List) GetNth(n int) *Item {
 		return i
 	}
 	// else we iterate backwads from last item
-	if n <= -l.Len() {
+	if n <= -l.length {
 		return nil
 	}
 	i := l.last
@@ -97,7 +98,7 @@ func (l List) GetNth(n int) *Item {
 // if n >= length of list, then add back
 // if n is negative add front
 func (l *List) InsertAfterNth(n int, v interface{}) *Item {
-	if n >= l.Len() {
+	if n >= l.length {
 		return l.PushBack(v)
 	}
 	if n < 0 {
@@ -106,17 +107,13 @@ func (l *List) InsertAfterNth(n int, v interface{}) *Item {
 
 	nth := l.GetNth(n)
 	next := nth.Next()
-	i := Item{value: v, container: l, prev: nth, next: next}
-	nth.next = &i
-	next.prev = &i
+	i := &Item{value: v, container: l, prev: nth, next: next}
+	nth.next = i
+	next.prev = i
 
-	l.append(&i)
+	l.length++
 
-	return &i
-}
-
-func (l *List) append(i *Item) {
-	l.data[i] = true
+	return i
 }
 
 // Item is one item in double linked list
@@ -160,6 +157,6 @@ func (i *Item) Remove() {
 	i.value = nil
 	i.next = nil
 	i.prev = nil
-	delete(i.container.data, i)
+	i.container.length--
 	i = nil
 }

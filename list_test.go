@@ -23,9 +23,6 @@ func createList() (l *List) {
 
 func TestNewListCreation(t *testing.T) {
 	l := NewList()
-	if l.data == nil {
-		t.Error("List has not been created")
-	}
 	if l.Len() != 0 {
 		t.Error("New list has not zero len")
 	}
