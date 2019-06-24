@@ -2,13 +2,12 @@ package list
 
 // List is a container of double linked items
 type List struct {
-	//data  map[*Item]bool
 	length int
 	first  *Item
 	last   *Item
 }
 
-//NewList constructor
+// NewList constructor
 func NewList() *List {
 	return &List{}
 }
