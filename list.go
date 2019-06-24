@@ -19,63 +19,63 @@ func (l List) Len() int {
 
 // First item in list
 func (l List) First() *Item {
-	if l.Len() > 0 {
-		return l.first
-	}
-	return nil
+	return l.first
 }
 
 // Last item from list
 func (l List) Last() *Item {
-	if l.Len() > 0 {
-		return l.last
-	}
-	return nil
+	return l.last
 }
 
 // PushFront item at the beginning of list
 func (l *List) PushFront(v interface{}) *Item {
-	i := Item{value: v, container: l}
+	i := &Item{value: v, container: l}
 
-	if l.insertFirst(&i) {
-		return &i
+	if l.first == nil && l.last == nil {
+		l.first = i
+		l.last = i
+		l.append(i)
+		return i
 	}
 
-	first := l.First()
+	first := l.first
 
-	first.prev = &i
+	first.prev = i
 	i.next = first
-	l.append(&i)
-	l.first = &i
-	return &i
+	l.append(i)
+	l.first = i
+	return i
 }
 
 // PushBack item to the end of list
 func (l *List) PushBack(v interface{}) *Item {
-	i := Item{value: v, container: l}
+	i := &Item{value: v, container: l}
 
-	if l.insertFirst(&i) {
-		return &i
+	if l.first == nil && l.last == nil {
+		l.first = i
+		l.last = i
+		l.append(i)
+		return i
 	}
 
-	last := l.Last()
+	last := l.last
 
-	last.next = &i
+	last.next = i
 	i.prev = last
-	l.append(&i)
-	l.last = &i
-	return &i
+	l.append(i)
+	l.last = i
+	return i
 }
 
 // GetNth return item at nth-index beginning from 0;
 // if n < 0 we start iteration from last element;
-// if n > list length we return last element
+// if n > list length we return nil
 func (l List) GetNth(n int) *Item {
 	if n >= 0 { // we iterate from first onwards
 		if n >= l.Len() {
-			return l.Last()
+			return nil
 		}
-		i := l.First()
+		i := l.first
 
 		for j := 0; j < n; j++ {
 			i = i.next
@@ -84,9 +84,9 @@ func (l List) GetNth(n int) *Item {
 	}
 	// else we iterate backwads from last item
 	if n <= -l.Len() {
-		return l.First()
+		return nil
 	}
-	i := l.Last()
+	i := l.last
 	for j := 0; j > n; j-- {
 		i = i.prev
 	}
@@ -117,16 +117,6 @@ func (l *List) InsertAfterNth(n int, v interface{}) *Item {
 
 func (l *List) append(i *Item) {
 	l.data[i] = true
-}
-
-func (l *List) insertFirst(i *Item) bool {
-	if (l.First() == nil) && (l.Last() == nil) { // this is empty list
-		l.first = i
-		l.last = i
-		l.append(i)
-		return true
-	}
-	return false
 }
 
 // Item is one item in double linked list

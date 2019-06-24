@@ -71,28 +71,36 @@ func TestInsertSeveralItems(t *testing.T) {
 func TestGetNthItem(t *testing.T) {
 	l := createList()
 
-	nth2 := l.GetNth(1).Value()
-	nth1 := l.GetNth(0).Value()
-	nth10 := l.GetNth(10).Value()
-	nthMinus2 := l.GetNth(-1).Value()
-	nthMinus10 := l.GetNth(-10).Value()
+	nth2 := l.GetNth(1)
+	nth1 := l.GetNth(0)
 
-	if nth2 != i2 {
+	nthMinus2 := l.GetNth(-1)
+
+	if nth2.Value() != i2 {
 		t.Errorf("Get middle value expected %v got %v", i2, nth2)
 	}
-	if nth1 != i1 {
+	if nth1.Value() != i1 {
 		t.Errorf("Get first value expected %v got %v", i1, nth1)
 	}
-	if nth10 != i3 {
-		t.Errorf("Get last value expected %v got %v", i3, nth10)
-	}
-	if nthMinus2 != i2 {
+
+	if nthMinus2.Value() != i2 {
 		t.Errorf("Get middle value expected %v got %v", i2, nthMinus2)
 	}
-	if nthMinus10 != i1 {
-		t.Errorf("Get first value expected %v got %v", i1, nthMinus10)
+
+}
+
+func TestGetNthOutOfBounds(t *testing.T) {
+	l := createList()
+	nth10 := l.GetNth(10)       // nil
+	nthMinus10 := l.GetNth(-10) // nil
+
+	if nth10 != nil {
+		t.Errorf("Expected %v got %v", nil, nth10)
 	}
 
+	if nthMinus10 != nil {
+		t.Errorf("Get first value expected %v got %v", nil, nthMinus10)
+	}
 }
 
 func TestRemoveItem(t *testing.T) {
@@ -157,7 +165,7 @@ func TestInsertAfter(t *testing.T) {
 	// insert one more at the end and one to the front
 	nth = l.InsertAfterNth(10, i4)
 	nthMinus := l.InsertAfterNth(-2, i4)
-	// now we expect 
+	// now we expect
 	// ["4th", "test", 123, "4th", true, "4th"]
 	if l.Len() != 6 {
 		t.Errorf("List length after insertion: want %v, got %v", 6, l.Len())
