@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-type Counter struct {
+type mutexCounter struct {
 	sync.Mutex
 	counter int
 }
@@ -17,16 +17,17 @@ type job struct {
 	fn
 }
 
-func Exec(jobs []fn, maxWorkers int, maxErrors int) {
+// Exec func creates pool of size poolSize and run jobs until maxErrors reached
+func Exec(jobs []fn, poolSize int, maxErrors int) {
 	var wg sync.WaitGroup
 	ch := make(chan job)
 
 	// we assign counter to maxErrors to reduce it in pool
-	c := Counter{counter: maxErrors}
+	c := mutexCounter{counter: maxErrors}
 
-	wg.Add(maxWorkers)
+	wg.Add(poolSize)
 	// create pool of workers
-	for i := 0; i < maxWorkers; i++ {
+	for i := 0; i < poolSize; i++ {
 		go func(i int) {
 			// we subscribe on channel of jobs
 			for j := range ch {
@@ -44,6 +45,8 @@ func Exec(jobs []fn, maxWorkers int, maxErrors int) {
 		}(i)
 	}
 
+	// we are sending jobs to pool, and check counter
+	// if max errors reached, we stop
 	var i int
 	for i < len(jobs) {
 		ch <- job{num: i, fn: jobs[i]}
