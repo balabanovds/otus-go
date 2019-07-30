@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 type fn func() error
@@ -15,29 +14,20 @@ type job struct {
 	fn
 }
 
-type logg struct {
+type errData struct {
 	sync.Mutex
-	data []string
+	counter int
+	max     int
 }
 
-func newLog() logg {
-	return logg{data: []string{}}
+func (e errData) isMax() bool {
+	return e.counter >= e.max
 }
 
-func (l *logg) add(s string) {
-	l.Lock()
-	l.data = append(l.data, time.Now().String()+"   "+s)
-	l.Unlock()
-}
-func (l *logg) addf(format string, a ...interface{}) {
-	sf := fmt.Sprintf(format, a...)
-	l.add(sf)
-}
-
-func (l logg) print() {
-	for _, v := range l.data {
-		fmt.Println(v)
-	}
+func (e *errData) incr() {
+	e.Lock()
+	e.counter++
+	e.Unlock()
 }
 
 // Exec func creates pool of size poolSize and run jobs until maxErrors reached
@@ -49,8 +39,7 @@ func Exec(jobs []fn, poolSize int, maxErrors int) {
 	jobsChan := make(chan job, len(jobs))
 
 	// we create channel to hold amount of errors for orchestration workers
-	errCh := make(chan int, 1)
-	errCh <- 0
+	ed := errData{max: maxErrors}
 
 	wg.Add(poolSize)
 	// create pool of workers
@@ -59,19 +48,17 @@ func Exec(jobs []fn, poolSize int, maxErrors int) {
 			defer wg.Done()
 			// we subscribe on channel of jobs
 			for j := range jobsChan {
-				e := <-errCh
-				if e < maxErrors {
+				if !ed.isMax() {
 					var b strings.Builder
 					_, _ = fmt.Fprintf(&b, "worker_%d -> processing job_%d", i, j.num)
 					err := j.fn()
 					if err != nil {
 						// if job return error we increase counter
-						e++
-						_, _ = fmt.Fprintf(&b, " -> got error %d", e)
+						ed.incr()
+						_, _ = fmt.Fprintf(&b, " -> got error %d", ed.counter)
 					}
 					l.add(b.String())
 				}
-				errCh <- e
 			}
 		}(i)
 	}
